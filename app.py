@@ -1,31 +1,30 @@
 import streamlit as st
-from PIL import Image
-import numpy as np
 import torch
-import timm
+from PIL import Image
 import cv2
+import numpy as np
 
-st.set_page_config(page_title="ML Image Overlay", layout="wide")
+# Load model
+@st.cache_resource
+def load_model():
+    model = torch.load("model.pt", map_location="cpu")
+    model.eval()
+    return model
 
-st.title("ML Image Overlay Demo")
+model = load_model()
 
-# Upload an image
-uploaded_file = st.file_uploader("Upload an image", type=["jpg", "png", "jpeg"])
+st.title("DermAI - Skin Lesion Classifier")
+
+uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 if uploaded_file:
     image = Image.open(uploaded_file).convert("RGB")
-    st.image(image, caption="Original Image", use_column_width=True)
+    st.image(image, caption="Uploaded Image", use_column_width=True)
 
-    # Convert to numpy array for overlay processing
+    # Convert to numpy array for OpenCV processing if needed
     img_array = np.array(image)
 
-    # --- Dummy ML inference ---
-    # Replace this with your actual model inference
-    st.write("Running dummy ML inference...")
-    overlay = img_array.copy()
-    overlay[:, :, 0] = 255 - overlay[:, :, 0]  # Just invert the red channel as a placeholder
-
-    # Convert back to Image for display
-    overlay_image = Image.fromarray(overlay)
-    st.image(overlay_image, caption="Overlay Result", use_column_width=True)
-
-    st.success("Done! Replace the dummy ML code with your model.")
+    # Example: preprocess for your model
+    # img_tensor = your_preprocessing_function(img_array)
+    # prediction = model(img_tensor)
+    
+    st.write("Model loaded successfully. You can now add preprocessing and prediction code.")
